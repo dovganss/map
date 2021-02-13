@@ -7,8 +7,29 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <div id="map" class="map"></div>
-  
+ <div id="map" class="map"></div>
+ <div id="modal">
+   <div class="modal__close">
+      <img src="img/close.png" alt="" class="modal__close-img">
+   </div>
+  <div class="modal__list">
+      <div class="reviews__list">
+          <div class="reviews__item">
+              <p></p>
+              <p></p>
+          </div>
+      </div>
+  </div>
+  <div class="modal__body">
+      <div class="form" id="reviewForm">
+          <h3 class="form__title">Отзыв:</h3>
+          <input type="text" class="form__input" id="name" placeholder="Укажите ваше имя">
+          <input type="text" class="form__input" id="place" placeholder="Укажите место">
+          <textarea name="" class="form__textarea" id="review" placeholder="Оставить отзыв"></textarea>
+          <button type="submit" class="form__button" id="send">Добавить</button>
+      </div>
+  </div>
+</div>
   <script src="https://api-maps.yandex.ru/2.1/?lang=ru_RU" type="text/javascript">
 	</script>
   <script src="main.js" type="text/javascript"></script>
