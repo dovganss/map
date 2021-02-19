@@ -43,9 +43,8 @@ function addListeners(){
      myMap.geoObjects.add(myplacemark);
      objectManager.add(myplacemark);
 
-     document.getElementById("name").value = "";
-     document.getElementById("place").value = "";
-     document.getElementById("review").value = "";
+     const modal = document.getElementById('modal');
+     modal.style.display = 'none';
   });
 }
 
