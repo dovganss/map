@@ -4,6 +4,10 @@ let objectManager;
 
 let objectId = 0;
 
+let reviews = [];
+
+const STORAGE_KEY = 'REVIEWS_APP';
+
 ymaps.ready(init);
 
 function init() {
@@ -22,11 +26,38 @@ function init() {
 
     myMap.geoObjects.add(objectManager);
 
+    const savedReviews = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (savedReviews){
+        savedReviews.forEach(item => {
+            let featuresObj = {
+                'type': 'Feature',
+                'id': item.objectId,
+                'geometry': {
+                    'type': 'Point',
+                    'coordinates': item.coords
+                },
+            };
+            reviews.push({
+                objectId: item.objectId,
+                coords: item.coords,
+                reviews: [...item.reviews]
+            });
+        
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(reviews));
+        
+            objectManager.add({
+                'type': 'FeatureCollection',
+                'features': [featuresObj]
+            });        
+        });
+    }
+
     addListeners()
 }
 
 function addListeners() {
     myMap.events.add('click', function (event) {
+        clearReviews();
         openModal(event);
     });
 
@@ -37,16 +68,12 @@ function addListeners() {
 
     btn.addEventListener('click', function (event) {
         event.preventDefault();
-        validateForm();
-        fillObjectInObjectManager();
-        // myplacemark = new ymaps.Placemark(coords, {
-        //     balloonContentHeader: "Балун метки",
-        //     balloonContentBody: "Содержимое <em>балуна</em> метки",
-        //     balloonContentFooter: "Подвал",
-        //     hintContent: "Хинт метки"
-        // });
-        // myMap.geoObjects.add(myplacemark);
-        // objectManager.add(myplacemark);
+        const name = document.getElementById('name');
+        const place = document.getElementById('place');
+        const review = document.getElementById('review');
+
+        validateForm(name, place, review);
+        fillObjectInObjectManager(name, place, review);
 
         const modal = document.getElementById('modal');
         modal.style.display = 'none';
@@ -67,7 +94,7 @@ function addListeners() {
 }
 
 
-function fillObjectInObjectManager(){
+function fillObjectInObjectManager(name, place, review){
     let featuresObj = {
         'type': 'Feature',
         'id': objectId,
@@ -75,13 +102,20 @@ function fillObjectInObjectManager(){
             'type': 'Point',
             'coordinates': coords
         },
-        // 'properties': {
-        //     'balloonContentHeader': `<b>${place}</b>`,
-        //     'balloonContentBody': `<a href="#" class="slider__link">${name}</a>
-        //                             <p>${review}</p>`,
-        //     'balloonContentFooter': `${Date.now().toLocaleString()}`,
-        // }
     };
+
+    reviews.push({
+        objectId: objectId,
+        coords: coords,
+        reviews: [{
+            name: name.value,
+            place: place.value,
+            review: review.value,
+            date: new Date().toLocaleString()
+            }]
+    });
+
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(reviews));
 
     objectManager.add({
         'type': 'FeatureCollection',
@@ -92,8 +126,8 @@ function fillObjectInObjectManager(){
 }
 
 
-function validateForm() {
-    const name = document.getElementById('name')
+function validateForm(name, place, review) {
+    return name.value && place.value && review.value;
 }
 
 function openModal(event) {
@@ -119,11 +153,36 @@ function getClickCoords(coords) {
 }
 
 function onObjectEvent(event) {
-
     const objectId = event.get('objectId');
     openModal(event);
+
+    clearReviews();
+    const reviewsByPlace = reviews.filter(item => item.objectId === objectId);
+    if (reviewsByPlace) {
+        const reviewsList = document.getElementById('reviewsList');
+        reviewsByPlace.forEach(item=> {
+            item.reviews.forEach(review =>{
+                const reviewItem = document.createElement('div');
+                reviewItem.classList.add('review__item');
+                reviewItem.innerHTML = `<div class="modal__item-top">` + 
+                `<span class="modal__item-name">${review.name}</span>
+                <span class="modal__item-place">${review.place}</span>
+                <span class="modal__item-place">${review.date}</span>` + 
+                `</div>`;
+                reviewsList.appendChild(reviewItem);
+            });
+        })
+    }
+
     // console.log(objectId);
 
+}
+
+function clearReviews(){
+    const userReviews = document.querySelector('.modal__list');
+    if (userReviews){
+        Array.from(userReviews).forEach(item => item.remove());
+    }
 }
 
 
