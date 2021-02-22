@@ -43,13 +43,14 @@ function init() {
                 reviews: [...item.reviews]
             });
         
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(reviews));
+           // localStorage.setItem(STORAGE_KEY, JSON.stringify(reviews));
         
             objectManager.add({
                 'type': 'FeatureCollection',
                 'features': [featuresObj]
             });        
         });
+        objectId = Math.max.apply(Math, savedReviews.map(function(o) { return o.objectId; }))
     }
 
     addListeners()
