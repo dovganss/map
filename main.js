@@ -168,7 +168,8 @@ function onObjectEvent(event) {
                 reviewItem.innerHTML = `<div class="modal__item-top">` + 
                 `<span class="modal__item-name">${review.name}</span>
                 <span class="modal__item-place">${review.place}</span>
-                <span class="modal__item-place">${review.date}</span>` + 
+                <span class="modal__item-place">${review.date}</span><br>
+                <span class="modal__item-review">${review.review}</span>` + 
                 `</div>`;
                 reviewsList.appendChild(reviewItem);
             });
