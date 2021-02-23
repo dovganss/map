@@ -87,6 +87,7 @@ html, body {
   right: 10px;
   top: 10px;
   cursor: pointer;
+  z-index: 10;
 }
 
 .modal__item-name {
